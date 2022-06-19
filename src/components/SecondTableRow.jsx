@@ -1,30 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import TableCell from "@mui/material/TableCell";
 import { StyledTableRow } from "./MainTable";
+import { randomID } from "../service/common";
 
 const SecondTableRow = ({ data, abbr, randomUserData }) => {
-  const [rowData, setRowData] = useState(data);
-  const [rowABBR, setRowABBR] = useState(abbr);
-  const [rowRandomUserData, setRowRandomUserData] = useState(randomUserData);
-  function randomID() {
-    return Math.floor(Math.random() * (100 - 1 + 1) + 1);
-  }
-  const ID = useMemo(() => randomID(), [data]);
-  // useMemo(() => {
-  //   setRowData(data);
-  //   setRowABBR(abbr);
-  //   setRowRandomUserData(randomUserData);
-  // }, [data, abbr, randomUserData]);
+  const ID = useMemo(() => randomID(1, 100), [data]);
 
   return (
     <>
       <StyledTableRow>
         <TableCell>
-          {rowABBR}: {rowData[rowABBR].value}
+          {abbr}: {data[abbr].value}
         </TableCell>
-        <TableCell align="center">{rowData[rowABBR].dateRelease}</TableCell>
-        <TableCell align="center">{rowRandomUserData[ID].username}</TableCell>
-        <TableCell align="center">{rowRandomUserData[ID].comment}</TableCell>
+        <TableCell align="center">{data[abbr].dateRelease}</TableCell>
+        <TableCell align="center">{randomUserData[ID].username}</TableCell>
+        <TableCell align="center">{randomUserData[ID].comment}</TableCell>
       </StyledTableRow>
     </>
   );

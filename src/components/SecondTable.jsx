@@ -16,18 +16,20 @@ import { NewInputsSeconTable } from "./NewInputsSeconTable";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { RANDOM_USER_API } from "../service/index";
+import { randomID } from "../service/common";
 
 const SecondTable = () => {
   let date = new Date();
-  console.log(date.toLocaleDateString());
   const [newTableData, setNewTableData] = useState([]);
   const [randomUserData, setRandomUserData] = useState([]);
   const [newInputsValue, setNewInputsValue] = useState([]);
-  const [valueNum, setValueNum] = useState("");
+  const [valueNum, setValueNum] = useState(randomID(0, 100000));
   const [dataRelease, setDataRelease] = useState(date);
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
   // console.log(dataRelease);
+  // localStorage.setItem("data", JSON.stringify([]));
   let retrievedObject = localStorage.getItem("SecondTableData");
   useEffect(() => {
     fetch(RANDOM_USER_API)
@@ -37,13 +39,12 @@ const SecondTable = () => {
       .then((data) => {
         setNewTableData(JSON.parse(retrievedObject));
         setRandomUserData(data);
+        setUserName(data[randomID(1, 100)].username);
+        setComment(data[randomID(1, 100)].comment);
       });
   }, []);
-  const RANDOM_USER_API =
-    "https://61e7eaede32cd90017acbe93.mockapi.io/username_comments";
   const handleChange = (newValue) => {
     setDataRelease(newValue);
-    console.log(dataRelease);
   };
   // console.log(`newInputsValue`, newInputsValue);
   const [City, Year, ABBR, Obj] = newTableData; //ABRR is (XX,YY,ZZ)
@@ -73,10 +74,10 @@ const SecondTable = () => {
         comment: comment,
       };
       setNewInputsValue([...newInputsValue, newInputsData]);
-      setValueNum("");
+      setValueNum(randomID(0, 100000));
       setDataRelease(date);
-      setUserName("");
-      setComment("");
+      setUserName(randomUserData[randomID(1, 100)].username);
+      setComment(randomUserData[randomID(1, 100)].comment);
     } else {
       return false;
     }
@@ -119,7 +120,6 @@ const SecondTable = () => {
                   );
                 })}
               {newInputsValue.map((obj, index) => {
-                // console.log(newInputsValue);
                 return <NewInputsSeconTable key={index} data={obj} />;
               })}
               <StyledTableRow>
