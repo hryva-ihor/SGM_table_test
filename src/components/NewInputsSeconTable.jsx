@@ -1,6 +1,6 @@
 import { TableCell } from "@mui/material";
 import React from "react";
-import { StyledTableRow } from "./MainTable";
+import { StyledTableRow } from "../service/common";
 
 const NewInputsSeconTable = ({ data }) => {
   // console.log(data);

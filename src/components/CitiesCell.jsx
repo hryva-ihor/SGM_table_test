@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledTableCell } from "./MainTable";
+import { StyledTableCell } from "../service/common";
 
 const CitiesCell = ({ year, state, city, getDataValue }) => {
   // const yearArr = [2017, 2018, 2019];

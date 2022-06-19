@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import TableCell from "@mui/material/TableCell";
-import { StyledTableRow } from "./MainTable";
 import { randomID } from "../service/common";
-
+import { StyledTableRow } from "../service/common";
 const SecondTableRow = ({ data, abbr, randomUserData }) => {
   const ID = useMemo(() => randomID(1, 100), [data]);
 

@@ -1,8 +1,7 @@
 import React from "react";
 import { CitiesCell } from "./CitiesCell";
 import { EmptyCell } from "./EmptyCell";
-
-import { StyledTableCell, StyledTableRow } from "./MainTable";
+import { StyledTableRow, StyledTableCell } from "../service/common";
 
 const CitiesRow = ({ state, city, getDataId }) => {
   const getDataValue = (e) => {

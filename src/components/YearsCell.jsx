@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledTableCell } from "./MainTable";
+import { StyledTableCell } from "../service/common";
 
 const YearsCell = ({ year }) => {
   return (

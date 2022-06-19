@@ -7,17 +7,17 @@ import {
   Table,
   Button,
   TextField,
+  Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { StyledTableCell, StyledTableRow } from "./MainTable";
 import { SecondTableRow } from "./SecondTableRow";
 import { Box } from "@mui/material";
 import { NewInputsSeconTable } from "./NewInputsSeconTable";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { RANDOM_USER_API } from "../service/index";
-import { randomID } from "../service/common";
+import { randomID, StyledTableCell, StyledTableRow } from "../service/common";
+import { getRandomUserData } from "../service/index";
 
 const SecondTable = () => {
   let date = new Date();
@@ -28,34 +28,31 @@ const SecondTable = () => {
   const [dataRelease, setDataRelease] = useState(date);
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
-  // console.log(dataRelease);
-  // localStorage.setItem("data", JSON.stringify([]));
+  const [userNameArr, setUserNameArr] = useState([]);
   let retrievedObject = localStorage.getItem("SecondTableData");
+  const filterNameFromUserData = (data) => {
+    let arr = data.map((user) => {
+      return { label: user.username };
+    });
+    setUserNameArr(arr);
+  };
   useEffect(() => {
-    fetch(RANDOM_USER_API)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setNewTableData(JSON.parse(retrievedObject));
-        setRandomUserData(data);
-        setUserName(data[randomID(1, 100)].username);
-        setComment(data[randomID(1, 100)].comment);
-      });
+    getRandomUserData().then(({ data }) => {
+      setNewTableData(JSON.parse(retrievedObject));
+      setRandomUserData(data);
+      setUserName(data[randomID(1, 100)].username);
+      setComment(data[randomID(1, 100)].comment);
+      filterNameFromUserData(data);
+    });
   }, []);
   const handleChange = (newValue) => {
     setDataRelease(newValue);
   };
-  // console.log(`newInputsValue`, newInputsValue);
   const [City, Year, ABBR, Obj] = newTableData; //ABRR is (XX,YY,ZZ)
   const handleInputsValue = (e) => {
-    // console.log(e.target.id);
     switch (e.target.id) {
       case "valueNum":
         setValueNum(e.target.value);
-        break;
-      case "userName":
-        setUserName(e.target.value);
         break;
       case "comment":
         setComment(e.target.value);
@@ -139,22 +136,22 @@ const SecondTable = () => {
                     label="Date"
                     inputFormat="MM/dd/yyyy"
                     value={dataRelease}
-                    // onChange={(e) => {
-                    //   handleInputsValue(e);
-                    // }}
                     onChange={handleChange}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <TextField
-                    onChange={(e) => {
-                      handleInputsValue(e);
-                    }}
-                    value={userName}
+                  <Autocomplete
                     id="userName"
-                    label="User name"
-                    variant="standard"
+                    value={userName}
+                    onInputChange={(event, newInputValue) => {
+                      setUserName(newInputValue);
+                    }}
+                    options={userNameArr}
+                    sx={{ width: 200 }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="User name" />
+                    )}
                   />
                 </TableCell>
                 <TableCell align="center">
