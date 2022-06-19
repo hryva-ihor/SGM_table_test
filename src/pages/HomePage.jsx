@@ -16,7 +16,7 @@ const HomePage = () => {
     setDataState(state);
   }, []);
 
-  const getDataId = (e) => {
+  const getDataFromeTableCell = (e) => {
     let arr = e.target.getAttribute("data-id").split(",");
     localStorage.setItem(
       "SecondTableData",
@@ -53,7 +53,7 @@ const HomePage = () => {
                 return (
                   <CitiesRow
                     state={dataState}
-                    getDataId={getDataId}
+                    getDataId={getDataFromeTableCell}
                     key={city}
                     city={city}
                   />

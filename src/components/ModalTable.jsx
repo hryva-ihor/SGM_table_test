@@ -10,16 +10,17 @@ import {
   Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { SecondTableRow } from "./SecondTableRow";
+import { SecondTableRow } from "./ModalTableRow";
 import { Box } from "@mui/material";
 import { NewInputsSeconTable } from "./NewInputsSeconTable";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { randomID, StyledTableCell, StyledTableRow } from "../service/common";
+import { randomID, StyledTableRow } from "../service/common";
 import { getRandomUserData } from "../service/index";
+import { ModalTableHead } from "./ModalTableHead";
 
-const SecondTable = () => {
+const ModalTable = () => {
   let date = new Date();
   const [newTableData, setNewTableData] = useState([]);
   const [randomUserData, setRandomUserData] = useState([]);
@@ -44,11 +45,11 @@ const SecondTable = () => {
       setComment(data[randomID(1, 100)].comment);
       filterNameFromUserData(data);
     });
-  }, []);
+  }, [retrievedObject]);
   const handleChange = (newValue) => {
     setDataRelease(newValue);
   };
-  const [City, Year, ABBR, Obj] = newTableData; //ABRR is (XX,YY,ZZ)
+  const [City, Year, , Obj] = newTableData; //ABRR is (XX,YY,ZZ)
   const handleInputsValue = (e) => {
     switch (e.target.id) {
       case "valueNum":
@@ -84,26 +85,7 @@ const SecondTable = () => {
       <Paper sx={{ maxWidth: "800px" }}>
         <TableContainer>
           <Table>
-            <TableHead>
-              <StyledTableRow>
-                <StyledTableCell>Region</StyledTableCell>
-                <StyledTableCell colSpan={4} align="center">
-                  {City}
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell>Year</StyledTableCell>
-                <StyledTableCell colSpan={4} align="center">
-                  {Year}
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <TableCell>Value</TableCell>
-                <TableCell align="center">Date release</TableCell>
-                <TableCell align="center">User</TableCell>
-                <TableCell align="center">Comment</TableCell>
-              </StyledTableRow>
-            </TableHead>
+            <ModalTableHead City={City} Year={Year} />
             <TableBody>
               {Obj &&
                 Object.keys(Obj).map((abbr) => {
@@ -125,10 +107,12 @@ const SecondTable = () => {
                     onChange={(e) => {
                       handleInputsValue(e);
                     }}
+                    error={!valueNum}
                     value={valueNum}
                     id="valueNum"
                     label="Value"
                     variant="standard"
+                    helperText={!valueNum ? `empty` : ""}
                   />
                 </TableCell>
                 <TableCell align="center">
@@ -144,7 +128,7 @@ const SecondTable = () => {
                   <Autocomplete
                     id="userName"
                     value={userName}
-                    onInputChange={(event, newInputValue) => {
+                    onInputChange={(e, newInputValue) => {
                       setUserName(newInputValue);
                     }}
                     options={userNameArr}
@@ -156,6 +140,8 @@ const SecondTable = () => {
                 </TableCell>
                 <TableCell align="center">
                   <TextField
+                    error={!comment}
+                    helperText={!comment ? `empty` : ""}
                     onChange={(e) => {
                       handleInputsValue(e);
                     }}
@@ -193,4 +179,4 @@ const SecondTable = () => {
     </LocalizationProvider>
   );
 };
-export { SecondTable };
+export { ModalTable };
