@@ -1,10 +1,8 @@
 import { TableCell } from "@mui/material";
 import React from "react";
-import { StyledTableRow } from "../service/common";
+import { StyledTableRow } from "../../service/common";
 
 const NewInputsSeconTable = ({ data }) => {
-  // console.log(data);
-
   return (
     <StyledTableRow>
       <TableCell>new value: {data.value}</TableCell>

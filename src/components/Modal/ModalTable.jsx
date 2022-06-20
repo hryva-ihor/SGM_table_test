@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   TableBody,
-  TableHead,
   TableCell,
   TableContainer,
   Table,
@@ -10,15 +9,16 @@ import {
   Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { SecondTableRow } from "./ModalTableRow";
+import { ModalTableRow } from "./ModalTableRow";
 import { Box } from "@mui/material";
 import { NewInputsSeconTable } from "./NewInputsSeconTable";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { randomID, StyledTableRow } from "../service/common";
-import { getRandomUserData } from "../service/index";
+import { randomID, StyledTableRow } from "../../service/common";
+import { getRandomUserData } from "../../service/index";
 import { ModalTableHead } from "./ModalTableHead";
+import { SimpleBackdrop } from "../Loader";
 
 const ModalTable = () => {
   let date = new Date();
@@ -30,7 +30,9 @@ const ModalTable = () => {
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
   const [userNameArr, setUserNameArr] = useState([]);
+  const [openLoader, setOpenLoader] = useState(false);
   let retrievedObject = localStorage.getItem("SecondTableData");
+  console.log(newTableData);
   const filterNameFromUserData = (data) => {
     let arr = data.map((user) => {
       return { label: user.username };
@@ -38,18 +40,25 @@ const ModalTable = () => {
     setUserNameArr(arr);
   };
   useEffect(() => {
-    getRandomUserData().then(({ data }) => {
-      setNewTableData(JSON.parse(retrievedObject));
-      setRandomUserData(data);
-      setUserName(data[randomID(1, 100)].username);
-      setComment(data[randomID(1, 100)].comment);
-      filterNameFromUserData(data);
-    });
+    setOpenLoader(true);
+    getRandomUserData()
+      .then(({ data }) => {
+        setOpenLoader(false);
+        setNewTableData(JSON.parse(retrievedObject));
+        setRandomUserData(data);
+        setUserName(data[randomID(1, 100)].username);
+        setComment(data[randomID(1, 100)].comment);
+        filterNameFromUserData(data);
+      })
+      .catch((error) => {
+        setOpenLoader(false);
+        alert(error.message);
+      });
   }, [retrievedObject]);
   const handleChange = (newValue) => {
     setDataRelease(newValue);
   };
-  const [City, Year, , Obj] = newTableData; //ABRR is (XX,YY,ZZ)
+  const [City, Year, ABBR, Obj] = newTableData; //ABRR is (XX,YY,ZZ)
   const handleInputsValue = (e) => {
     switch (e.target.id) {
       case "valueNum":
@@ -82,22 +91,19 @@ const ModalTable = () => {
   };
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Paper sx={{ maxWidth: "800px" }}>
+      <Paper>
         <TableContainer>
           <Table>
             <ModalTableHead City={City} Year={Year} />
             <TableBody>
-              {Obj &&
-                Object.keys(Obj).map((abbr) => {
-                  return (
-                    <SecondTableRow
-                      data={Obj}
-                      key={abbr}
-                      abbr={abbr}
-                      randomUserData={randomUserData}
-                    />
-                  );
-                })}
+              {Obj && (
+                <ModalTableRow
+                  data={Obj}
+                  key={ABBR}
+                  abbr={ABBR}
+                  randomUserData={randomUserData}
+                />
+              )}
               {newInputsValue.map((obj, index) => {
                 return <NewInputsSeconTable key={index} data={obj} />;
               })}
@@ -109,6 +115,7 @@ const ModalTable = () => {
                     }}
                     error={!valueNum}
                     value={valueNum}
+                    maxRows={1}
                     id="valueNum"
                     label="Value"
                     variant="standard"
@@ -127,6 +134,7 @@ const ModalTable = () => {
                 <TableCell align="center">
                   <Autocomplete
                     id="userName"
+                    // maxRows={1}
                     value={userName}
                     onInputChange={(e, newInputValue) => {
                       setUserName(newInputValue);
@@ -145,6 +153,8 @@ const ModalTable = () => {
                     onChange={(e) => {
                       handleInputsValue(e);
                     }}
+                    multiline
+                    maxRows={3}
                     value={comment}
                     id="comment"
                     label="Comment"
@@ -176,6 +186,7 @@ const ModalTable = () => {
           </Button>
         </Box>
       </Paper>
+      <SimpleBackdrop openLoader={openLoader} />
     </LocalizationProvider>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledTableCell } from "../service/common";
+import { StyledTableCell } from "../../service/common";
 
 const EmptyCell = () => {
   return (

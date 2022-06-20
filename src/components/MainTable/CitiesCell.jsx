@@ -1,9 +1,7 @@
 import React from "react";
-import { StyledTableCell } from "../service/common";
+import { StyledTableCell } from "../../service/common";
 
 const CitiesCell = ({ year, state, city, getDataValue }) => {
-  // const yearArr = [2017, 2018, 2019];
-  // console.log(Object.keys(state[city].G));
   return Object.keys(state[city].G[year]).map((key, index) => {
     return (
       <StyledTableCell

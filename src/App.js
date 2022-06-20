@@ -1,7 +1,7 @@
 import { Box } from "@mui/system";
 import { Route, Routes } from "react-router";
 import "./App.css";
-import { ModalTable } from "./components/ModalTable";
+import { ModalTable } from "./components/Modal/ModalTable";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
