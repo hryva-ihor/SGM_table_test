@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   TableBody,
-  TableCell,
   TableContainer,
   Table,
   Button,
@@ -9,30 +8,39 @@ import {
   Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
-import { ModalTableRow } from "./ModalTableRow";
 import { Box } from "@mui/material";
-import { NewInputsSeconTable } from "./NewInputsSeconTable";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { randomID, StyledTableRow } from "../../service/common";
+import {
+  randomID,
+  StyledTableRow,
+  StyledTableCell,
+} from "../../service/common";
 import { getRandomUserData } from "../../service/index";
 import { ModalTableHead } from "./ModalTableHead";
 import { SimpleBackdrop } from "../Loader";
+import { REGION_DATA } from "../../pages/HomePage";
+import { NewInputsSeconTable } from "./NewInputsModal";
 
 const ModalTable = () => {
   let date = new Date();
   const [newTableData, setNewTableData] = useState([]);
-  const [randomUserData, setRandomUserData] = useState([]);
-  const [newInputsValue, setNewInputsValue] = useState([]);
-  const [valueNum, setValueNum] = useState(randomID(0, 100000));
-  const [dataRelease, setDataRelease] = useState(date);
+  const [valueNum, setValueNum] = useState(Number);
+  const [NewDataRelease, setNewDataRelease] = useState(date);
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
   const [userNameArr, setUserNameArr] = useState([]);
   const [openLoader, setOpenLoader] = useState(false);
-  let retrievedObject = localStorage.getItem("SecondTableData");
-  console.log(newTableData);
+  const [storageState, setStorageState] = useState({});
+  const [newInputsValue, setNewInputsValue] = useState([]);
+  console.log(valueNum);
+  const [retrievedObject, setRetrievedObject] = useState(
+    localStorage.getItem("SecondTableData")
+  );
+  const [localStorageState, setLocalStorageState] = useState(
+    localStorage.getItem(REGION_DATA)
+  );
   const filterNameFromUserData = (data) => {
     let arr = data.map((user) => {
       return { label: user.username };
@@ -45,19 +53,33 @@ const ModalTable = () => {
       .then(({ data }) => {
         setOpenLoader(false);
         setNewTableData(JSON.parse(retrievedObject));
-        setRandomUserData(data);
+        setStorageState(JSON.parse(localStorageState));
         setUserName(data[randomID(1, 100)].username);
         setComment(data[randomID(1, 100)].comment);
+        setValueNum(randomID(0, 100000));
         filterNameFromUserData(data);
       })
       .catch((error) => {
         setOpenLoader(false);
         alert(error.message);
       });
-  }, [retrievedObject]);
+  }, [retrievedObject, localStorageState]);
   const handleChange = (newValue) => {
-    setDataRelease(newValue);
+    setNewDataRelease(newValue);
   };
+  useEffect(() => {
+    getRandomUserData().then(({ data }) => {
+      let dataFromMainTable = JSON.parse(retrievedObject);
+      let newInputsData = {
+        value: dataFromMainTable[3][dataFromMainTable[2]].value,
+        date: dataFromMainTable[3][dataFromMainTable[2]].dateRelease,
+        username: data[randomID(1, 100)].username,
+        comment: data[randomID(1, 100)].comment,
+      };
+      setNewInputsValue([...newInputsValue, newInputsData]);
+    });
+  }, []);
+
   const [City, Year, ABBR, Obj] = newTableData; //ABRR is (XX,YY,ZZ)
   const handleInputsValue = (e) => {
     switch (e.target.id) {
@@ -72,23 +94,32 @@ const ModalTable = () => {
         break;
     }
   };
-  const handleAddTableRow = () => {
-    if (valueNum && dataRelease && userName && comment) {
+  const handleAdd = () => {
+    if (valueNum && NewDataRelease && userName && comment) {
       let newInputsData = {
         value: valueNum,
-        date: dataRelease.toLocaleDateString(),
+        date: NewDataRelease.toLocaleDateString(),
         username: userName,
         comment: comment,
       };
       setNewInputsValue([...newInputsValue, newInputsData]);
-      setValueNum(randomID(0, 100000));
-      setDataRelease(date);
-      setUserName(randomUserData[randomID(1, 100)].username);
-      setComment(randomUserData[randomID(1, 100)].comment);
-    } else {
-      return false;
     }
+    let newStorageState = { ...storageState };
+    newStorageState[newTableData[0]].G[newTableData[1]][newTableData[2]].value =
+      valueNum;
+    newStorageState[newTableData[0]].G[newTableData[1]][
+      newTableData[2]
+    ].dateRelease = NewDataRelease.toLocaleDateString().replaceAll(".", "-");
+    let addedTableData = [...newTableData];
+    addedTableData[3][addedTableData[2]].value = valueNum;
+    addedTableData[3][addedTableData[2]].dateRelease =
+      NewDataRelease.toLocaleDateString().replaceAll(".", "-");
+    localStorage.setItem("SecondTableData", JSON.stringify(addedTableData));
+    localStorage.setItem(REGION_DATA, JSON.stringify(newStorageState));
+    setRetrievedObject(localStorage.getItem("SecondTableData"));
+    setLocalStorageState(localStorage.getItem(REGION_DATA));
   };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Paper>
@@ -96,19 +127,13 @@ const ModalTable = () => {
           <Table>
             <ModalTableHead City={City} Year={Year} />
             <TableBody>
-              {Obj && (
-                <ModalTableRow
-                  data={Obj}
-                  key={ABBR}
-                  abbr={ABBR}
-                  randomUserData={randomUserData}
-                />
-              )}
               {newInputsValue.map((obj, index) => {
-                return <NewInputsSeconTable key={index} data={obj} />;
+                return (
+                  <NewInputsSeconTable key={index} ABBR={ABBR} data={obj} />
+                );
               })}
               <StyledTableRow>
-                <TableCell>
+                <StyledTableCell>
                   <TextField
                     onChange={(e) => {
                       handleInputsValue(e);
@@ -117,21 +142,21 @@ const ModalTable = () => {
                     value={valueNum}
                     maxRows={1}
                     id="valueNum"
-                    label="Value"
+                    label="New value"
                     variant="standard"
                     helperText={!valueNum ? `empty` : ""}
                   />
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   <DesktopDatePicker
                     label="Date"
                     inputFormat="MM/dd/yyyy"
-                    value={dataRelease}
+                    value={NewDataRelease}
                     onChange={handleChange}
                     renderInput={(params) => <TextField {...params} />}
                   />
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   <Autocomplete
                     id="userName"
                     // maxRows={1}
@@ -145,8 +170,8 @@ const ModalTable = () => {
                       <TextField {...params} label="User name" />
                     )}
                   />
-                </TableCell>
-                <TableCell align="center">
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   <TextField
                     error={!comment}
                     helperText={!comment ? `empty` : ""}
@@ -160,7 +185,7 @@ const ModalTable = () => {
                     label="Comment"
                     variant="standard"
                   />
-                </TableCell>
+                </StyledTableCell>
               </StyledTableRow>
             </TableBody>
           </Table>
@@ -168,7 +193,7 @@ const ModalTable = () => {
         <Box display="flex" justifyContent="flex-end">
           <Button
             onClick={() => {
-              handleAddTableRow();
+              handleAdd();
             }}
             sx={{ m: 2 }}
             variant="contained"

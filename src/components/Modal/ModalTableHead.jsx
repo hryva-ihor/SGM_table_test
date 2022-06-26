@@ -1,4 +1,4 @@
-import { TableCell, TableHead } from "@mui/material";
+import { TableHead } from "@mui/material";
 import React from "react";
 import { StyledTableCell, StyledTableRow } from "../../service/common";
 
@@ -18,10 +18,10 @@ const ModalTableHead = ({ City, Year }) => {
         </StyledTableCell>
       </StyledTableRow>
       <StyledTableRow>
-        <TableCell>Value</TableCell>
-        <TableCell align="center">Date release</TableCell>
-        <TableCell align="center">User</TableCell>
-        <TableCell align="center">Comment</TableCell>
+        <StyledTableCell>Value</StyledTableCell>
+        <StyledTableCell align="center">Date release</StyledTableCell>
+        <StyledTableCell align="center">User</StyledTableCell>
+        <StyledTableCell align="center">Comment</StyledTableCell>
       </StyledTableRow>
     </TableHead>
   );

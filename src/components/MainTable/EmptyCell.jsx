@@ -1,12 +1,12 @@
 import React from "react";
 import { StyledTableCell } from "../../service/common";
 
-const EmptyCell = () => {
+const EmptyCell = ({ arrABBR }) => {
   return (
     <>
-      <StyledTableCell sx={{ opacity: "0.5" }}> empty </StyledTableCell>
-      <StyledTableCell sx={{ opacity: "0.5" }}> empty </StyledTableCell>
-      <StyledTableCell sx={{ opacity: "0.5" }}> empty </StyledTableCell>
+      {arrABBR.map(() => {
+        return <StyledTableCell key={Math.random()}> empty </StyledTableCell>;
+      })}
     </>
   );
 };

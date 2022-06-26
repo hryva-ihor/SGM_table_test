@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
-import TableCell from "@mui/material/TableCell";
-import { StyledTableRow } from "../../service/common";
+import { StyledTableRow, StyledTableCell } from "../../service/common";
 import { randomID } from "../../service/common";
 
 const ModalTableRow = ({ data, abbr, randomUserData }) => {
@@ -9,12 +8,18 @@ const ModalTableRow = ({ data, abbr, randomUserData }) => {
   return (
     <>
       <StyledTableRow>
-        <TableCell>
+        <StyledTableCell>
           {abbr}: {data[abbr].value}
-        </TableCell>
-        <TableCell align="center">{data[abbr].dateRelease}</TableCell>
-        <TableCell align="center">{randomUserData[ID].username}</TableCell>
-        <TableCell align="center">{randomUserData[ID].comment}</TableCell>
+        </StyledTableCell>
+        <StyledTableCell align="center">
+          {data[abbr].dateRelease}
+        </StyledTableCell>
+        <StyledTableCell align="center">
+          {randomUserData[ID].username}
+        </StyledTableCell>
+        <StyledTableCell align="center">
+          {randomUserData[ID].comment}
+        </StyledTableCell>
       </StyledTableRow>
     </>
   );

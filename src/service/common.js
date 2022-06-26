@@ -16,11 +16,15 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
     whiteSpace: "nowrap",
+    border: "1px solid #5C5C5C",
+    borderCollapse: "collapse",
   },
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
+    border: "1px solid #5C5C5C",
+    borderCollapse: "collapse",
   },
 }));
