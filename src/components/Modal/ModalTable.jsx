@@ -27,7 +27,7 @@ const ModalTable = () => {
   let date = new Date();
   const [newTableData, setNewTableData] = useState([]);
   const [valueNum, setValueNum] = useState(Number);
-  const [NewDataRelease, setNewDataRelease] = useState(date);
+  const [NewDataRelease, setNewDataRelease] = useState("");
   const [userName, setUserName] = useState("");
   const [comment, setComment] = useState("");
   const [userNameArr, setUserNameArr] = useState([]);
@@ -58,6 +58,7 @@ const ModalTable = () => {
         setComment(data[randomID(1, 100)].comment);
         setValueNum(randomID(0, 100000));
         filterNameFromUserData(data);
+        setNewDataRelease(date);
       })
       .catch((error) => {
         setOpenLoader(false);
